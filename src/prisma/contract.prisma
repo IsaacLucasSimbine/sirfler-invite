@@ -1,0 +1,12 @@
+// use prisma-next
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String?
+  name      String?
+  password  String
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+

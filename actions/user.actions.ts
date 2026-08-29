@@ -1,0 +1,39 @@
+import { UserService } from "@/services/user.service";
+import { UserFormState, UserFormSchema  } from "@/lib/definitions";
+import { createSession } from "@/lib/session";
+import { redirect } from "next/dist/client/components/navigation";
+
+export async function signUp(state: UserFormState, formData: FormData) {
+    const validatedFields = UserFormSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+  })
+    
+if (!validatedFields.success) {
+    const errorMessages = validatedFields.error.flatten().fieldErrors;
+    return {
+        error: {
+            name: errorMessages.name?.[0],
+            email: errorMessages.email?.[0],
+            password: errorMessages.password?.[0],
+            },
+        };
+    }
+    
+    const userService = new UserService();
+    try {
+        const user = await userService.createUser({
+            name: formData.get('name') as string,
+            email: formData.get('email') as string,
+            password: formData.get('password') as string,
+        });
+
+        await createSession(String(user.id));
+        redirect('/dashboard');
+        return { message: "User created successfully" };
+    } catch (error) {
+        return { error: { email: (error as Error).message } };
+    }
+
+}

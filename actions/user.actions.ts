@@ -1,14 +1,19 @@
+"use server";
+
 import { UserService } from "@/services/user.service";
-import { UserFormState, UserFormSchema  } from "@/lib/definitions";
-import { createSession } from "@/lib/session";
+import { UserFormState, UserFormSchema, LoginFormSchema, LoginFormState  } from "@/lib/definitions";
+import { createSession, deleteSession } from "@/lib/session";
 import { redirect } from "next/dist/client/components/navigation";
 
 export async function signUp(state: UserFormState, formData: FormData) {
-    const validatedFields = UserFormSchema.safeParse({
-    name: formData.get('name'),
-    email: formData.get('email'),
-    password: formData.get('password'),
-  })
+const validatedFields = UserFormSchema.safeParse({
+  name: formData.get('name'),
+  username: formData.get('username'),
+  email: formData.get('email'),
+  password: formData.get('password'),
+})
+
+  console.log("Validated Fields:", validatedFields);
     
 if (!validatedFields.success) {
     const errorMessages = validatedFields.error.flatten().fieldErrors;
@@ -16,6 +21,7 @@ if (!validatedFields.success) {
         error: {
             name: errorMessages.name?.[0],
             email: errorMessages.email?.[0],
+            username: errorMessages.username?.[0],
             password: errorMessages.password?.[0],
             },
         };
@@ -24,9 +30,10 @@ if (!validatedFields.success) {
     const userService = new UserService();
     try {
         const user = await userService.createUser({
-            name: formData.get('name') as string,
-            email: formData.get('email') as string,
-            password: formData.get('password') as string,
+        name: formData.get('name') as string,
+        username: formData.get('username') as string,
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
         });
 
         await createSession(String(user.id));
@@ -36,4 +43,44 @@ if (!validatedFields.success) {
         return { error: { email: (error as Error).message } };
     }
 
+}
+
+
+export async function signIn(state: LoginFormState, formData: FormData) {
+  const validatedFields = LoginFormSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!validatedFields.success) {
+    const errorMessages = validatedFields.error.flatten().fieldErrors;
+    return {
+      error: {
+        email: errorMessages.email?.[0],
+        password: errorMessages.password?.[0],
+      },
+    };
+  }
+
+  const { email, password } = validatedFields.data;
+  const userService = new UserService();
+
+  try {
+    const user = await userService.verifyCredentials(email, password);
+
+    if (!user) {
+      return { message: "Email ou palavra-passe incorretos" };
+    }
+
+    await createSession(String(user.id));
+  } catch (error) {
+    return { message: (error as Error).message };
+  }
+
+  redirect("/dashboard");
+}
+
+export async function signOut() {
+  await deleteSession();
+  redirect("/login");
 }

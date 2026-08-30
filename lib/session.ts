@@ -15,3 +15,7 @@ export async function createSession(userId: string) {
     path: '/',
   })
 }
+
+export async function deleteSession() {
+  (await cookies()).delete("session");
+}

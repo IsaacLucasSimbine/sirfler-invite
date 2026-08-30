@@ -30,4 +30,19 @@ export class UserService {
         return user;
         
     }
+    async verifyCredentials(email: string, password: string) {
+        const user = await this.userRepository.findByEmail(email);
+
+        if (!user) {
+            return null;
+        }
+
+        const passwordMatches = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatches) {
+            return null;
+        }
+
+        return user;
+        }
 }

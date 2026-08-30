@@ -1,8 +1,9 @@
 "use client";
 
-import { signUp } from "@/actions/user.actions";
+import { signIn } from "@/actions/user.actions";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import Link from "next/link";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -14,64 +15,26 @@ function SubmitButton() {
       aria-busy={pending}
       className="w-full rounded-md bg-black p-2 text-white disabled:cursor-not-allowed disabled:opacity-50"
     >
-      {pending ? "A criar conta..." : "Criar conta"}
+      {pending ? "A entrar..." : "Entrar"}
     </button>
   );
 }
 
-export default function SignupPage() {
-  const [state, formAction] = useActionState(signUp, undefined);
+export default function LoginPage() {
+  const [state, formAction] = useActionState(signIn, undefined);
 
   return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Criar conta</h1>
+          <h1 className="text-3xl font-bold">Entrar</h1>
 
           <p className="text-gray-500">
-            Preencha os dados para criar a sua conta.
+            Introduza os seus dados para aceder à sua conta.
           </p>
         </div>
 
         <form action={formAction} className="space-y-4">
-          {/* Nome */}
-          <div>
-            <label htmlFor="name">Nome</label>
-
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              className="w-full rounded-md border p-2"
-            />
-
-            {state?.error?.name && (
-              <p className="mt-1 text-sm text-red-500">
-                {state.error.name}
-              </p>
-            )}
-          </div>
-
-          {/* Username */}
-          <div>
-            <label htmlFor="username">Username</label>
-
-            <input
-              id="username"
-              name="username"
-              type="text"
-              autoComplete="username"
-              className="w-full rounded-md border p-2"
-            />
-
-            {state?.error?.username && (
-              <p className="mt-1 text-sm text-red-500">
-                {state.error.username}
-              </p>
-            )}
-          </div>
-
           {/* Email */}
           <div>
             <label htmlFor="email">Email</label>
@@ -100,7 +63,7 @@ export default function SignupPage() {
               id="password"
               name="password"
               type="password"
-              autoComplete="new-password"
+              autoComplete="current-password"
               required
               className="w-full rounded-md border p-2"
             />
@@ -122,6 +85,13 @@ export default function SignupPage() {
           {/* Botão */}
           <SubmitButton />
         </form>
+
+        <p className="text-center text-sm text-gray-500">
+          Não tem conta?{" "}
+          <Link href="/signup" className="text-black underline">
+            Criar conta
+          </Link>
+        </p>
       </div>
     </main>
   );

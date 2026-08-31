@@ -1,12 +1,29 @@
-// use prisma-next
-
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
+  id        Int         @id(map: "user_pkey") @default(autoincrement())
+  createdAt Timestamptz @default(now())
+  email     String      @unique(map: "user_email_key")
   name      String?
+  updatedAt Timestamptz @default(now())
+  username  String?
   password  String
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+
+  @@map("user")
 }
 
+model Guest {
+  id          Int         @id @default(autoincrement())
+  name        String
+  publicToken String      @unique
+  rsvpStatus  RsvpStatus  @default(PENDING)
+  respondedAt Timestamptz?
+  createdAt   Timestamptz @default(now())
+  updatedAt   Timestamptz @default(now())
+
+  @@map("guest")
+}
+
+enum RsvpStatus {
+  PENDING
+  CONFIRMED
+  DECLINED
+}

@@ -1,4 +1,3 @@
-// src/repositories/user.repository.ts
 import { db } from "@/src/prisma/db";
 
 type CreateUserInput = {
@@ -10,25 +9,29 @@ type CreateUserInput = {
 
 export class UserRepository {
   async createUser(data: CreateUserInput) {
-    const user = await db.orm.public.User.create({
+    return db.orm.public.User.create({
       email: data.email,
       username: data.username,
       name: data.name,
       password: data.password,
     });
-
-    return user;
   }
 
   async findByEmail(email: string) {
-    return db.orm.public.User.where({ email }).first();
+    return db.orm.public.User
+      .where({ email })
+      .first();
   }
 
   async findByUsername(username: string) {
-    return db.orm.public.User.where({ username }).first();  
+    return db.orm.public.User
+      .where({ username })
+      .first();
   }
 
   async findById(id: number) {
-    return db.orm.public.User.where({ id }).first();
+    return db.orm.public.User
+      .where({ id })
+      .first();
   }
 }

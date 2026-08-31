@@ -5,7 +5,10 @@ import { UserFormState, UserFormSchema, LoginFormSchema, LoginFormState } from "
 import { createSession, deleteSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 
-export async function signUp(state: UserFormState, formData: FormData) {
+export async function signUp(
+  state: UserFormState,
+  formData: FormData
+): Promise<UserFormState> {
   const validatedFields = UserFormSchema.safeParse({
     name: formData.get('name'),
     username: formData.get('username'),
@@ -40,7 +43,7 @@ export async function signUp(state: UserFormState, formData: FormData) {
     return { error: { email: (error as Error).message } };
   }
 
-  redirect('/dashboard'); // agora fora do try/catch
+  redirect('/dashboard');
 }
 
 export async function signIn(state: LoginFormState, formData: FormData) {

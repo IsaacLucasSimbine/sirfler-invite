@@ -7,17 +7,17 @@ export const UserFormSchema = z.object({
     password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
 });
 
-export type UserFormState = 
-|{
-    error?:{
-        name?: string,
-        email?: string,
-        username?: string,
-        password?: string,
-    },
-    message?: string,
-}
-| undefined;
+export type UserFormState =
+  | {
+      error?: {
+        name?: string;
+        username?: string;
+        email?: string;
+        password?: string;
+      };
+      message?: string;
+    }
+  | undefined;
 
 export type SessionPayload = { userId: string; };
 

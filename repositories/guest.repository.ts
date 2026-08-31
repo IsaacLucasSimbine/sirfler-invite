@@ -25,20 +25,18 @@ export class GuestRepository {
     return db.orm.public.Guest.where({ id }).first();
   }
 
-async updateRsvpStatus(
-  id: number,
-  rsvpStatus: "PENDING" | "CONFIRMED" | "DECLINED"
-) {
-  const respondedAt = Temporal.Now.instant();
+  async updateRsvpStatus(
+    id: number,
+    rsvpStatus: "PENDING" | "CONFIRMED" | "DECLINED"
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const respondedAt = Temporal.Now.instant() as any;
 
-  return db.orm.public.Guest.where({ id }).update({
-    rsvpStatus,
-    // @ts-expect-error — o Temporal.Instant do polyfill é estruturalmente
-    // quase idêntico ao esperado pelo orm-postgres, mas os tipos gerados
-    // (RC do Prisma 8) diferem ligeiramente; runtime funciona normalmente.
-    respondedAt,
-  });
-}
+    return db.orm.public.Guest.where({ id }).update({
+      rsvpStatus,
+      respondedAt,
+    });
+  }
 
   async findAll() {
     return db.orm.public.Guest.all();

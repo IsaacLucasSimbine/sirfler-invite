@@ -1,6 +1,11 @@
-// src/lib/temporal-polyfill.ts
-import { Temporal as TemporalPolyfill } from "@js-temporal/polyfill";
+import { Temporal } from "@js-temporal/polyfill";
 
-if (typeof globalThis.Temporal === "undefined") {
-  (globalThis as { Temporal?: unknown }).Temporal = TemporalPolyfill;
+if (typeof (globalThis as { Temporal?: unknown }).Temporal === "undefined") {
+  Object.defineProperty(globalThis, "Temporal", {
+    value: Temporal,
+    writable: true,
+    configurable: true,
+  });
 }
+
+export { Temporal };
